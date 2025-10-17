@@ -1,3 +1,5 @@
+using cardapio_digital_api.Context;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,12 @@ builder.Services.AddSwaggerGen(c =>
 
     c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
 }
+);
+
+var mysqlConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<CardapioDigitalDbContext>(options =>
+    options.UseMySql(mysqlConnectionString, ServerVersion.AutoDetect(mysqlConnectionString))
 );
 
 var app = builder.Build();
