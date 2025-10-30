@@ -1,4 +1,5 @@
 using cardapio_digital_api.Context;
+using cardapio_digital_api.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -24,6 +25,11 @@ var mysqlConnectionString = builder.Configuration.GetConnectionString("DefaultCo
 builder.Services.AddDbContext<CardapioDigitalDbContext>(options =>
     options.UseMySql(mysqlConnectionString, ServerVersion.AutoDetect(mysqlConnectionString))
 );
+
+// Dependency Injection for Repositories and Unit of Work
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 var app = builder.Build();
 
