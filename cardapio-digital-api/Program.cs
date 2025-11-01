@@ -1,7 +1,9 @@
 using cardapio_digital_api.Context;
+using cardapio_digital_api.Logging;
 using cardapio_digital_api.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using cardapio_digital_api.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,13 @@ var mysqlConnectionString = builder.Configuration.GetConnectionString("DefaultCo
 builder.Services.AddDbContext<CardapioDigitalDbContext>(options =>
     options.UseMySql(mysqlConnectionString, ServerVersion.AutoDetect(mysqlConnectionString))
 );
+
+// Custom Logging Configuration
+
+builder.Logging.AddProvider(new CustomLoggerProvider(new CustomLoggerProviderConfiguration
+{
+    Loglevel = LogLevel.Information
+}));
 
 // Dependency Injection for Repositories and Unit of Work
 
