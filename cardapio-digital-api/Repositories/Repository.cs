@@ -24,11 +24,10 @@ namespace cardapio_digital_api.Repositories
         /// Inicializa uma nova instância do repositório genérico.
         /// </summary>
         /// <param name="ctx">Contexto do banco de dados.</param>
-        /// <param name="dbSet">Conjunto de entidades do tipo <typeparamref name="T"/>.</param>
-        public Repository(CardapioDigitalDbContext ctx, DbSet<T> dbSet)
+        public Repository(CardapioDigitalDbContext ctx)
         {
             _ctx = ctx;
-            _dbSet = dbSet;
+            _dbSet = _ctx.Set<T>();
         }
 
         /// <summary>

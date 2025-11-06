@@ -3,7 +3,6 @@ using cardapio_digital_api.Logging;
 using cardapio_digital_api.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using cardapio_digital_api.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
