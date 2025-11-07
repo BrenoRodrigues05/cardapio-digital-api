@@ -1,5 +1,6 @@
 using cardapio_digital_api.Context;
 using cardapio_digital_api.Logging;
+using cardapio_digital_api.Middlewares;
 using cardapio_digital_api.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -44,6 +45,10 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
+
+// Use Custom Exception Middleware
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
