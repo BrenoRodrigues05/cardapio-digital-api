@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace cardapio_digital_api.DTOs
 {
@@ -53,6 +54,12 @@ namespace cardapio_digital_api.DTOs
         /// </summary>
         /// <example>2</example>
         public int RestauranteId { get; set; }
+
+        /// <summary>
+        /// Quantidade disponível em estoque para este produto.
+        /// </summary>
+        /// <example>10</example>
+        public int QuantidadeEstoque { get; set; }
 
         /// <summary>
         /// Dados básicos do restaurante responsável pelo pedido.

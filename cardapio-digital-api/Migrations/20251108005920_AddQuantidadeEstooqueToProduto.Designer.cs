@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using cardapio_digital_api.Context;
 
@@ -11,9 +12,11 @@ using cardapio_digital_api.Context;
 namespace cardapio_digital_api.Migrations
 {
     [DbContext(typeof(CardapioDigitalDbContext))]
-    partial class CardapioDigitalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251108005920_AddQuantidadeEstooqueToProduto")]
+    partial class AddQuantidadeEstooqueToProduto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -35,6 +35,13 @@ namespace cardapio_digital_api.DTOs
         public decimal Preco { get; set; }
 
         /// <summary>
+        /// Quantidade disponível em estoque para este produto.
+        /// </summary>
+        /// <example>10</example>
+        [Range(0, int.MaxValue)]
+        public int QuantidadeEstoque { get; set; } = 0;
+
+        /// <summary>
         /// Indica se o produto está disponível para pedidos.
         /// </summary>
         /// <example>true</example>

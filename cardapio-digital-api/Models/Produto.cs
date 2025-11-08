@@ -52,8 +52,16 @@ namespace cardapio_digital_api.Models
         public int RestauranteId { get; set; }
 
         /// <summary>
+        /// Quantidade disponível em estoque para este produto.
+        /// </summary>
+        /// <example>10</example>
+        [Range(0, int.MaxValue)]
+        public int QuantidadeEstoque { get; set; } = 0;
+
+        /// <summary>
         /// Restaurante associado ao produto.
         /// </summary>
+        /// 
         public Restaurante? Restaurante { get; set; } = null!;
 
         /// <summary>
