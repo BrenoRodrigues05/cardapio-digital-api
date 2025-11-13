@@ -2,7 +2,9 @@
 using cardapio_digital_api.DTOs;
 using cardapio_digital_api.Models;
 using cardapio_digital_api.Repositories;
+using cardapio_digital_api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace cardapio_digital_api.Controllers
 {
@@ -26,30 +28,22 @@ namespace cardapio_digital_api.Controllers
     public class PedidosController : ControllerBase
     {
         private readonly ILogger<PedidosController> _logger;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<Pedido> _pedidoRepository;
+        private readonly IPedidoService _pedidoService;
         private readonly IMapper _mapper;
-        private readonly IRepository<Produto> _produtoRepository;
 
         /// <summary>
         /// Inicializa uma nova instância do <see cref="PedidosController"/>.
         /// </summary>
         /// <param name="logger">Logger para registrar informações e erros.</param>
-        /// <param name="unitOfWork">Unit of Work para persistência de dados.</param>
-        /// <param name="pedidoRepository">Repositório de pedidos para operações CRUD.</param>
-        /// <param name="produtoRepository">Repositório de produtos para buscar e atualizar estoque.</param>
+        /// <param name="pedidoService">Serviço responsável pelas operações de negócio relacionadas a pedidos.</param>
         /// <param name="mapper">AutoMapper para conversão entre entidades e DTOs.</param>
         public PedidosController(
             ILogger<PedidosController> logger,
-            IUnitOfWork unitOfWork,
-            IRepository<Pedido> pedidoRepository,
-            IRepository<Produto> produtoRepository,
+            IPedidoService pedidoService,
             IMapper mapper)
         {
             _logger = logger;
-            _unitOfWork = unitOfWork;
-            _pedidoRepository = pedidoRepository;
-            _produtoRepository = produtoRepository;
+            _pedidoService = pedidoService;
             _mapper = mapper;
         }
 
@@ -62,7 +56,7 @@ namespace cardapio_digital_api.Controllers
         public async Task<ActionResult<IEnumerable<PedidoReadDTO>>> GetAll()
         {
             _logger.LogInformation("Fetching all orders");
-            var orders = await _pedidoRepository.GetAllAsync();
+            var orders = await _pedidoService.GetAllPedidosAsync();
             var ordersDto = _mapper.Map<IEnumerable<PedidoReadDTO>>(orders);
             _logger.LogInformation("Fetched {Count} orders", ordersDto.Count());
             return Ok(ordersDto);
@@ -82,21 +76,12 @@ namespace cardapio_digital_api.Controllers
             _logger.LogInformation("Fetching orders for client ID: {ClienteId}", clienteId);
 
             // Pega todos os pedidos do banco
-            var allOrders = await _pedidoRepository.GetAllAsync();
+            var allOrders = await _pedidoService.GetPedidosPorClienteAsync(clienteId);
 
-            // Filtra pelo cliente
-            var orders = allOrders.Where(p => p.ClienteId == clienteId).ToList();
+            if(!allOrders.Any()) return NotFound("Nenhum pedido encontrado para este cliente.");
 
-            if (!orders.Any())
-            {
-                _logger.LogWarning("No orders found for client ID: {ClienteId}", clienteId);
-                return NotFound("Nenhum pedido encontrado para este cliente.");
-            }
-
-            var ordersDto = _mapper.Map<IEnumerable<PedidoReadDTO>>(orders);
-            _logger.LogInformation("Successfully fetched {Count} orders for client ID: {ClienteId}", 
-                orders.Count, clienteId);
-
+            var ordersDto = _mapper.Map<IEnumerable<PedidoReadDTO>>(allOrders);
+           
             return Ok(ordersDto);
         }
 
@@ -112,7 +97,7 @@ namespace cardapio_digital_api.Controllers
         public async Task<ActionResult<PedidoReadDTO>> GetById(int id)
         {
             _logger.LogInformation("Fetching order with ID: {Id}", id);
-            var order = await _pedidoRepository.GetByIdAsync(id);
+            var order = await _pedidoService.GetPedidoCompletoAsync(id);
 
             if (order == null)
             {
@@ -194,54 +179,19 @@ namespace cardapio_digital_api.Controllers
         {
             _logger.LogInformation("Creating a new order for client ID: {ClienteId}", pedidoDto.ClienteId);
 
-            if (pedidoDto.Itens == null || !pedidoDto.Itens.Any())
-                return BadRequest("É necessário incluir ao menos um item no pedido.");
+            var order = _mapper.Map<Pedido>(pedidoDto);
 
-            var pedido = new Pedido
+            try
             {
-                ClienteId = pedidoDto.ClienteId,
-                RestauranteId = pedidoDto.RestauranteId,
-                Status = "Aberto",
-                DataPedido = DateTime.UtcNow,
-                Itens = new List<ItemPedido>()
-            };
-
-            foreach (var itemDto in pedidoDto.Itens)
-            {
-                // Buscar o produto
-                var produto = await _produtoRepository.GetByIdAsync(itemDto.ProdutoId);
-                if (produto == null)
-                    return NotFound($"Produto com ID {itemDto.ProdutoId} não encontrado.");
-
-                // Verificar estoque
-                if (!produto.Disponivel || produto.QuantidadeEstoque < itemDto.Quantidade)
-                    return BadRequest($"Produto '{produto.Nome}' não possui estoque suficiente.");
-
-                // Criar ItemPedido
-                var itemPedido = new ItemPedido
-                {
-                    ProdutoId = produto.Id,
-                    Quantidade = itemDto.Quantidade,
-                    PrecoUnitario = produto.Preco
-                };
-
-                // Diminuir estoque
-                produto.QuantidadeEstoque -= itemDto.Quantidade;
-                if (produto.QuantidadeEstoque == 0)
-                    produto.Disponivel = false;
-
-                _produtoRepository.Update(produto);
-
-                pedido.Itens.Add(itemPedido);
+                var pedidoId = await _pedidoService.CriarPedidoAsync(order);
+                var pedidoReadDto = _mapper.Map<PedidoReadDTO>(await _pedidoService.
+                    GetPedidoCompletoAsync(pedidoId));
+                return CreatedAtAction(nameof(GetById), new { id = pedidoId }, pedidoReadDto);
             }
-
-            await _pedidoRepository.AddAsync(pedido);
-            await _unitOfWork.CommitAsync();
-
-            var pedidoReadDto = _mapper.Map<PedidoReadDTO>(pedido);
-            _logger.LogInformation("Order created with ID: {Id}", pedido.Id);
-
-            return CreatedAtAction(nameof(GetById), new { id = pedido.Id }, pedidoReadDto);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -258,20 +208,8 @@ namespace cardapio_digital_api.Controllers
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromQuery] string status)
         {
-            _logger.LogInformation("Updating status for order ID: {Id} to {Status}", id, status);
-            var order = await _pedidoRepository.GetByIdAsync(id);
-
-            if (order == null)
-            {
-                _logger.LogWarning("Order with ID: {Id} not found", id);
-                return NotFound("Pedido não encontrado.");
-            }
-
-            order.Status = status;
-            _pedidoRepository.Update(order);
-            await _unitOfWork.CommitAsync();
-
-            _logger.LogInformation("Status updated for order ID: {Id}", id);
+            var updated = await _pedidoService.AtualizarStatusPedidoAsync(id, status);
+            if (!updated) return NotFound("Pedido não encontrado.");
             return NoContent();
         }
 
@@ -286,19 +224,8 @@ namespace cardapio_digital_api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            _logger.LogInformation("Deleting order with ID: {Id}", id);
-            var order = await _pedidoRepository.GetByIdAsync(id);
-
-            if (order == null)
-            {
-                _logger.LogWarning("Order with ID: {Id} not found", id);
-                return NotFound("Pedido não encontrado.");
-            }
-
-            _pedidoRepository.Remove(order);
-            await _unitOfWork.CommitAsync();
-
-            _logger.LogInformation("Order deleted with ID: {Id}", id);
+            var deleted = await _pedidoService.DeletarPedidoAsync(id);
+            if (!deleted) return NotFound("Pedido não encontrado.");
             return NoContent();
         }
     }

@@ -6,11 +6,29 @@ namespace cardapio_digital_api.Services
     /// Serviço responsável pelas operações de negócio relacionadas à entidade <see cref="Pedido"/>.
     /// </summary>
     /// <remarks>
-    /// Define métodos para criar pedidos, consultar pedidos completos e atualizar o status
-    /// de pedidos, aplicando regras de negócio específicas da aplicação.
+    /// Define métodos para criar pedidos, consultar pedidos completos, atualizar status
+    /// e deletar pedidos, aplicando regras de negócio específicas da aplicação.
     /// </remarks>
     public interface IPedidoService
     {
+        /// <summary>
+        /// Recupera todos os pedidos existentes na aplicação.
+        /// </summary>
+        /// <returns>
+        /// Uma <see cref="Task{TResult}"/> contendo uma coleção de <see cref="Pedido"/>.
+        /// </returns>
+        Task<IEnumerable<Pedido>> GetAllPedidosAsync();
+
+        /// <summary>
+        /// Recupera todos os pedidos de um cliente específico.
+        /// </summary>
+        /// <param name="clienteId">Identificador único do cliente.</param>
+        /// <returns>
+        /// Uma <see cref="Task{TResult}"/> contendo uma coleção de <see cref="Pedido"/>
+        /// pertencentes ao cliente especificado.
+        /// </returns>
+        Task<IEnumerable<Pedido>> GetPedidosPorClienteAsync(int clienteId);
+
         /// <summary>
         /// Cria um novo pedido na aplicação.
         /// </summary>
@@ -50,5 +68,19 @@ namespace cardapio_digital_api.Services
         /// (por exemplo, um pedido só pode ir de "Em andamento" para "Finalizado").
         /// </remarks>
         Task<bool> AtualizarStatusPedidoAsync(int id, string novoStatus);
+
+        /// <summary>
+        /// Deleta um pedido existente da aplicação.
+        /// </summary>
+        /// <param name="id">Identificador único do pedido a ser deletado.</param>
+        /// <returns>
+        /// Uma <see cref="Task{TResult}"/> que, ao completar, retorna <c>true</c> se
+        /// o pedido foi deletado com sucesso, ou <c>false</c> se o pedido não foi encontrado.
+        /// </returns>
+        /// <remarks>
+        /// A deleção deve respeitar as regras de negócio, como impedir remoção de pedidos
+        /// já finalizados ou pagos, dependendo da implementação.
+        /// </remarks>
+        Task<bool> DeletarPedidoAsync(int id);
     }
 }

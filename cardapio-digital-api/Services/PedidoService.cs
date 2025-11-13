@@ -7,8 +7,8 @@ namespace cardapio_digital_api.Services
     /// Implementação do serviço responsável pelas operações de negócio relacionadas à entidade <see cref="Pedido"/>.
     /// </summary>
     /// <remarks>
-    /// Aplica regras de negócio para criação de pedidos, consulta de pedidos completos e atualização de status.
-    /// Utiliza <see cref="IUnitOfWork"/> para gerenciar as transações e repositórios associados.
+    /// Aplica regras de negócio para criação de pedidos, consulta de pedidos completos, atualização de status,
+    /// listagem de pedidos e deleção de pedidos. Utiliza <see cref="IUnitOfWork"/> para gerenciar transações e repositórios associados.
     /// </remarks>
     public class PedidoService : IPedidoService
     {
@@ -38,17 +38,14 @@ namespace cardapio_digital_api.Services
         /// </remarks>
         public async Task<int> CriarPedidoAsync(Pedido pedido)
         {
-            //Cliente
             var client = await _uow.Clientes.GetByIdAsync(pedido.ClienteId);
             if (client == null)
                 throw new Exception("Cliente não encontrado");
 
-            //Restaurante
             var restaurant = await _uow.Restaurantes.GetByIdAsync(pedido.RestauranteId);
             if (restaurant == null)
                 throw new Exception("Restaurante não encontrado");
 
-            //Validação dos itens do pedido
             if (pedido.Itens == null || pedido.Itens.Count == 0)
                 throw new Exception("O pedido deve conter pelo menos um item");
 
@@ -62,18 +59,13 @@ namespace cardapio_digital_api.Services
                 if (product.QuantidadeEstoque < item.Quantidade)
                     throw new Exception($"Estoque insuficiente para o produto {product.Nome}");
 
-                // Debita estoque
                 product.QuantidadeEstoque -= item.Quantidade;
                 _uow.Produtos.Update(product);
 
-                // Preço unitário do item
                 item.PrecoUnitario = product.Preco;
             }
 
-            // Adiciona o pedido
             await _uow.Pedidos.AddAsync(pedido);
-
-            // Salva as mudanças
             await _uow.CommitAsync();
 
             return pedido.Id;
@@ -100,9 +92,6 @@ namespace cardapio_digital_api.Services
         /// <returns>
         /// <c>true</c> se a atualização foi realizada com sucesso; <c>false</c> se o pedido não for encontrado.
         /// </returns>
-        /// <remarks>
-        /// Este método realiza a atualização e persiste as alterações utilizando o <see cref="IUnitOfWork"/>.
-        /// </remarks>
         public async Task<bool> AtualizarStatusPedidoAsync(int id, string novoStatus)
         {
             var order = await _uow.Pedidos.GetByIdAsync(id);
@@ -114,6 +103,43 @@ namespace cardapio_digital_api.Services
             _uow.Pedidos.Update(order);
             await _uow.CommitAsync();
 
+            return true;
+        }
+
+        /// <summary>
+        /// Recupera todos os pedidos existentes na aplicação.
+        /// </summary>
+        /// <returns>Uma coleção de <see cref="Pedido"/>.</returns>
+        public async Task<IEnumerable<Pedido>> GetAllPedidosAsync()
+        {
+            return await _uow.Pedidos.GetAllAsync();
+        }
+
+        /// <summary>
+        /// Recupera todos os pedidos de um cliente específico.
+        /// </summary>
+        /// <param name="clienteId">Identificador único do cliente.</param>
+        /// <returns>Uma coleção de <see cref="Pedido"/> pertencentes ao cliente especificado.</returns>
+        public async Task<IEnumerable<Pedido>> GetPedidosPorClienteAsync(int clienteId)
+        {
+            var all = await _uow.Pedidos.GetAllAsync();
+            return all.Where(p => p.ClienteId == clienteId).ToList();
+        }
+
+        /// <summary>
+        /// Deleta um pedido existente da aplicação.
+        /// </summary>
+        /// <param name="id">Identificador único do pedido a ser deletado.</param>
+        /// <returns>
+        /// <c>true</c> se o pedido foi deletado com sucesso, ou <c>false</c> se o pedido não foi encontrado.
+        /// </returns>
+        public async Task<bool> DeletarPedidoAsync(int id)
+        {
+            var order = await _uow.Pedidos.GetByIdAsync(id);
+            if (order == null) return false;
+
+            _uow.Pedidos.Remove(order);
+            await _uow.CommitAsync();
             return true;
         }
     }

@@ -55,12 +55,6 @@ namespace cardapio_digital_api.DTOs
         /// </remarks>
         public List<ProdutoReadDTO> Produtos { get; set; } = new List<ProdutoReadDTO>();
 
-        /// <summary>
-        /// Lista de pedidos realizados neste restaurante.
-        /// </summary>
-        /// <remarks>
-        /// Pode ser usada para relatórios e visualização de histórico de pedidos.
-        /// </remarks>
-        public List<PedidoReadDTO> Pedidos { get; set; } = new List<PedidoReadDTO>();
+        
     }
 }

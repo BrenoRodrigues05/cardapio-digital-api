@@ -56,12 +56,6 @@ namespace cardapio_digital_api.DTOs
         public int RestauranteId { get; set; }
 
         /// <summary>
-        /// Quantidade disponível em estoque para este produto.
-        /// </summary>
-        /// <example>10</example>
-        public int QuantidadeEstoque { get; set; }
-
-        /// <summary>
         /// Dados básicos do restaurante responsável pelo pedido.
         /// </summary>
         /// <remarks>

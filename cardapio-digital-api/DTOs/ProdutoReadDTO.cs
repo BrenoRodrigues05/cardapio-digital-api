@@ -39,18 +39,6 @@
         /// <example>true</example>
         public bool Disponivel { get; set; }
 
-        /// <summary>
-        /// Identificador do restaurante que oferece este produto.
-        /// </summary>
-        /// <example>2</example>
-        public int RestauranteId { get; set; }
-
-        /// <summary>
-        /// Dados básicos do restaurante associado ao produto.
-        /// </summary>
-        /// <remarks>
-        /// Inclui informações como nome e categoria do restaurante.
-        /// </remarks>
-        public RestauranteReadDTO? Restaurante { get; set; }
+        
     }
 }
