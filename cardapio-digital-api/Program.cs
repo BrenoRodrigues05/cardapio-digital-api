@@ -1,8 +1,10 @@
 using cardapio_digital_api.Context;
 using cardapio_digital_api.Logging;
 using cardapio_digital_api.Middlewares;
+using cardapio_digital_api.Models;
 using cardapio_digital_api.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +41,9 @@ builder.Logging.AddProvider(new CustomLoggerProvider(new CustomLoggerProviderCon
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IRestauranteRepository, RestauranteRepository>();
 
 // AutoMapper Configuration
 

@@ -27,7 +27,7 @@ namespace cardapio_digital_api.Repositories
         /// <summary>
         /// Repositório responsável pelas operações de persistência e consulta de pedidos realizados.
         /// </summary>
-        IRepository<Pedido> Pedidos { get; }
+        IPedidoRepository Pedidos { get; }
 
         /// <summary>
         /// Repositório responsável pelas operações de persistência e consulta dos produtos do cardápio.
