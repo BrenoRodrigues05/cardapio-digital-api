@@ -38,16 +38,19 @@ builder.Logging.AddProvider(new CustomLoggerProvider(new CustomLoggerProviderCon
     Loglevel = LogLevel.Information
 }));
 
+// Generic Repository Dependency Injection
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 // Dependency Injection for Repositories and Unit of Work
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IRestauranteRepository, RestauranteRepository>();
 
 // Dependency Injection for Services
 builder.Services.AddScoped<IPedidoService, PedidoService>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 // AutoMapper Configuration
 

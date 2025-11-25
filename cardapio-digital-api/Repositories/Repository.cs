@@ -48,9 +48,11 @@ namespace cardapio_digital_api.Repositories
         /// </summary>
         /// <param name="predicate">Expressão que define a condição de busca.</param>
         /// <returns>A entidade correspondente ou <c>null</c> se não for encontrada.</returns>
-        public async Task<T?> GetByPredicateAsync(Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<T>> GetByPredicateAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.FirstOrDefaultAsync(predicate);
+            return await _ctx.Set<T>()
+            .Where(predicate)
+             .ToListAsync();
         }
 
         /// <summary>
@@ -64,12 +66,19 @@ namespace cardapio_digital_api.Repositories
         /// Atualiza os dados de uma entidade existente no contexto.
         /// </summary>
         /// <param name="entity">A instância da entidade a ser atualizada.</param>
-        public void Update(T entity) => _dbSet.Update(entity);
+        public async Task Update(T entity) => _dbSet.Update(entity);
 
         /// <summary>
         /// Remove uma entidade existente do contexto.
         /// </summary>
         /// <param name="entity">A instância da entidade a ser removida.</param>
         public void Remove(T entity) => _dbSet.Remove(entity);
+
+       public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _ctx.Set<T>()
+        .AsNoTracking()
+        .FirstOrDefaultAsync(predicate);
+        }
     }
 }

@@ -32,7 +32,7 @@ namespace cardapio_digital_api.Repositories
         /// <summary>
         /// Repositório responsável pelas operações de persistência e consulta dos produtos do cardápio.
         /// </summary>
-        IRepository<Produto> Produtos { get; }
+       IProdutoRepository Produtos { get; }
 
         /// <summary>
         /// Repositório responsável pelas operações de persistência e consulta dos restaurantes cadastrados.

@@ -34,7 +34,7 @@ namespace cardapio_digital_api.Repositories
         /// </summary>
         /// <param name="predicate">Expressão que define a condição de busca.</param>
         /// <returns>A entidade correspondente ou <c>null</c> se não for encontrada.</returns>
-        Task<T?> GetByPredicateAsync(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<T>> GetByPredicateAsync(Expression<Func<T, bool>> predicate);
 
         /// <summary>
         /// Adiciona uma nova entidade do tipo <typeparamref name="T"/> ao contexto.
@@ -53,7 +53,7 @@ namespace cardapio_digital_api.Repositories
         /// <param name="entity">
         /// A instância da entidade a ser atualizada.
         /// </param>
-        void Update(T entity);
+        Task Update(T entity);
 
         /// <summary>
         /// Remove uma entidade existente do contexto.
@@ -62,5 +62,7 @@ namespace cardapio_digital_api.Repositories
         /// A instância da entidade a ser removida.
         /// </param>
         void Remove(T entity);
+
+        Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
     }
 }
