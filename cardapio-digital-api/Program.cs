@@ -51,6 +51,7 @@ builder.Services.AddScoped<IRestauranteRepository, RestauranteRepository>();
 // Dependency Injection for Services
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IClienteService, ClienteService>();
 
 // AutoMapper Configuration
 
