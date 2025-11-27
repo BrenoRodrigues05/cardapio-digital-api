@@ -3,17 +3,39 @@ using cardapio_digital_api.Repositories;
 
 namespace cardapio_digital_api.Services
 {
+    /// <summary>
+    /// Serviço responsável por gerenciar operações relacionadas a itens de pedidos.
+    /// </summary>
+    /// <remarks>
+    /// Fornece métodos para CRUD de itens de pedido, cálculo de subtotal, validação de estoque,
+    /// e adição ou incremento de itens em pedidos.
+    /// </remarks>
     public class ItemPedidoService : IItemPedidoService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<ItemPedidoService> _logger;
 
+        /// <summary>
+        /// Inicializa uma nova instância do serviço <see cref="ItemPedidoService"/>.
+        /// </summary>
+        /// <param name="unitOfWork">Instância de <see cref="IUnitOfWork"/> para persistência de dados.</param>
+        /// <param name="logger">Instância de <see cref="ILogger{ItemPedidoService}"/> para logging.</param>
         public ItemPedidoService(IUnitOfWork unitOfWork, ILogger<ItemPedidoService> logger)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Adiciona um item a um pedido ou incrementa a quantidade caso o item já exista.
+        /// </summary>
+        /// <param name="pedidoId">ID do pedido.</param>
+        /// <param name="produtoId">ID do produto.</param>
+        /// <param name="quantidade">Quantidade a ser adicionada.</param>
+        /// <param name="precoUnitario">Preço unitário do produto.</param>
+        /// <returns>O <see cref="ItemPedido"/> atualizado ou recém-criado.</returns>
+        /// <exception cref="ArgumentException">Quando IDs ou quantidade inválidos.</exception>
+        /// <exception cref="InvalidOperationException">Quando pedido ou produto inválidos ou indisponíveis.</exception>
         public async Task<ItemPedido> AdicionarOuIncrementarAsync(int pedidoId, int produtoId, int quantidade, decimal precoUnitario)
         {
            if(pedidoId <= 0)
@@ -96,6 +118,12 @@ namespace cardapio_digital_api.Services
             return pedidoAtualizado;
         }
 
+        /// <summary>
+        /// Atualiza um item existente do pedido.
+        /// </summary>
+        /// <param name="itemPedido">Item do pedido a ser atualizado.</param>
+        /// <returns><c>true</c> se a atualização foi bem-sucedida.</returns>
+        /// <exception cref="InvalidOperationException">Se o item não for encontrado.</exception>
         public async Task<bool> AtualizarAsync(ItemPedido itemPedido)
         {
             _logger.LogInformation("Atualizando item do pedido {ItemPedidoId}", itemPedido.Id);
@@ -117,6 +145,14 @@ namespace cardapio_digital_api.Services
             return true;
         }
 
+        /// <summary>
+        /// Calcula o subtotal de todos os itens de um pedido.
+        /// </summary>
+        /// <param name="pedidoId">ID do pedido.</param>
+        /// <returns>O subtotal como <see cref="decimal"/>.</returns>
+        /// <exception cref="ArgumentException">Se o ID do pedido for inválido.</exception>
+        /// <exception cref="KeyNotFoundException">Se o pedido não existir.</exception>
+        /// <exception cref="InvalidOperationException">Se o pedido estiver cancelado.</exception>
         public async Task<decimal> CalcularSubtotalDoPedidoAsync(int pedidoId)
         {
            if(pedidoId <= 0)
@@ -153,6 +189,13 @@ namespace cardapio_digital_api.Services
             return subtotal;
         }
 
+        /// <summary>
+        /// Cria um novo item de pedido.
+        /// </summary>
+        /// <param name="itemPedido">Item do pedido a ser criado.</param>
+        /// <returns>O <see cref="ItemPedido"/> criado.</returns>
+        /// <exception cref="ArgumentNullException">Se o item for nulo.</exception>
+        /// <exception cref="InvalidOperationException">Se pedido ou produto não existirem ou estoque insuficiente.</exception>
         public async Task<ItemPedido> CriarAsync(ItemPedido itemPedido)
         {
            if(itemPedido == null)
@@ -202,6 +245,12 @@ namespace cardapio_digital_api.Services
             return itemPedido;
         }
 
+        /// <summary>
+        /// Obtém todos os itens de um pedido específico.
+        /// </summary>
+        /// <param name="pedidoId">ID do pedido.</param>
+        /// <returns>Uma coleção de <see cref="ItemPedido"/>.</returns>
+        /// <exception cref="ArgumentException">Se o ID do pedido for inválido.</exception>
         public async Task<IEnumerable<ItemPedido>> ObterItensPorPedidoAsync(int pedidoId)
         {
             if (pedidoId <= 0)
@@ -224,6 +273,13 @@ namespace cardapio_digital_api.Services
             return itensPedido;
         }
 
+        /// <summary>
+        /// Obtém um item de pedido pelo seu ID.
+        /// </summary>
+        /// <param name="id">ID do item do pedido.</param>
+        /// <returns>O <see cref="ItemPedido"/> encontrado.</returns>
+        /// <exception cref="ArgumentException">Se o ID for inválido.</exception>
+        /// <exception cref="KeyNotFoundException">Se o item não for encontrado.</exception>
         public async Task<ItemPedido?> ObterPorIdAsync(int id)
         {
             if(id <= 0)
@@ -245,6 +301,12 @@ namespace cardapio_digital_api.Services
             return buscaItem;
         }
 
+        /// <summary>
+        /// Remove um item de pedido pelo seu ID.
+        /// </summary>
+        /// <param name="id">ID do item do pedido.</param>
+        /// <returns><c>true</c> se removido com sucesso; caso contrário, <c>false</c>.</returns>
+        /// <exception cref="ArgumentException">Se o ID for inválido.</exception>
         public async Task<bool> RemoverAsync(int id)
         {
             if(id <= 0)
@@ -271,6 +333,13 @@ namespace cardapio_digital_api.Services
             return true;
         }
 
+        /// <summary>
+        /// Valida se um produto está disponível e possui estoque suficiente.
+        /// </summary>
+        /// <param name="produtoId">ID do produto.</param>
+        /// <param name="quantidade">Quantidade desejada.</param>
+        /// <returns><c>true</c> se disponível; <c>false</c> caso contrário.</returns>
+        /// <exception cref="KeyNotFoundException">Se o produto não for encontrado.</exception>
         public async Task<bool> ValidarDisponibilidadeEEstoqueAsync(int produtoId, int quantidade)
         {
             var buscaProduto = await _unitOfWork.Produtos.GetByIdAsync(produtoId);

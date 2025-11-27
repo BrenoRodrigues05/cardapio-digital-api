@@ -6,15 +6,29 @@ using System.Text;
 
 namespace cardapio_digital_api.Services
 {
+    /// <summary>
+    /// Serviço responsável pela geração, validação e manipulação de tokens JWT e Refresh Tokens.
+    /// </summary>
     public class TokenService : ITokenService
     {
         private readonly IConfiguration _config;
 
+        /// <summary>
+        /// Construtor do <see cref="TokenService"/>.
+        /// </summary>
+        /// <param name="config">Configuração da aplicação (<see cref="IConfiguration"/>), incluindo informações de JWT.</param>
         public TokenService(IConfiguration config)
         {
             _config = config;
         }
 
+        /// <summary>
+        /// Gera um token de acesso (JWT) com base em claims fornecidas.
+        /// </summary>
+        /// <param name="claims">Coleção de <see cref="Claim"/> que será incluída no token.</param>
+        /// <param name="configuration">Configuração opcional (não utilizada, o serviço usa a configuração injetada).</param>
+        /// <returns>Um <see cref="JwtSecurityToken"/> válido.</returns>
+        /// <exception cref="ArgumentNullException">Se a chave secreta não estiver configurada.</exception>
         public JwtSecurityToken GenerateAccessToken(IEnumerable<Claim> claims, IConfiguration configuration)
         {
             var key = _config["Jwt:SecretKey"] ?? throw new ArgumentNullException("SecretKey inválida");
@@ -40,16 +54,27 @@ namespace cardapio_digital_api.Services
             return token;
         }
 
+        /// <summary>
+        /// Gera um refresh token seguro, codificado em Base64.
+        /// </summary>
+        /// <returns>Refresh token como <see cref="string"/>.</returns>
         public string GenerateRefreshToken()
         {
             var secureRandomBytes = new byte[128];
             using var randomNumberGenerator = RandomNumberGenerator.Create();
             randomNumberGenerator.GetBytes(secureRandomBytes);
 
-            var refreshToken = Convert.ToBase64String(secureRandomBytes);
-            return refreshToken;
+            return Convert.ToBase64String(secureRandomBytes);
         }
 
+        /// <summary>
+        /// Obtém o <see cref="ClaimsPrincipal"/> a partir de um token expirado, sem validar a expiração.
+        /// </summary>
+        /// <param name="token">Token JWT expirado.</param>
+        /// <param name="configuration">Configuração opcional (não utilizada, o serviço usa a configuração injetada).</param>
+        /// <returns>O <see cref="ClaimsPrincipal"/> contido no token.</returns>
+        /// <exception cref="ArgumentNullException">Se a chave secreta não estiver configurada.</exception>
+        /// <exception cref="SecurityTokenException">Se o token for inválido ou não usar HMAC SHA256.</exception>
         public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token, IConfiguration configuration)
         {
             var secretKey = _config["Jwt:SecretKey"] ?? throw new ArgumentNullException("SecretKey inválida");
@@ -60,7 +85,7 @@ namespace cardapio_digital_api.Services
                 ValidateAudience = false,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-                ValidateLifetime = false // Não valida expiração
+                ValidateLifetime = false // Ignora expiração para refresh token
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

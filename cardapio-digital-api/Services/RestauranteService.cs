@@ -4,23 +4,43 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cardapio_digital_api.Services
 {
+    /// <summary>
+    /// Serviço responsável pelas operações de CRUD e consultas relacionadas a restaurantes.
+    /// </summary>
     public class RestauranteService : IRestauranteService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<RestauranteService> _logger;
 
+        /// <summary>
+        /// Construtor do serviço de restaurantes.
+        /// </summary>
+        /// <param name="unitOfWork">Instância de <see cref="IUnitOfWork"/> para acesso aos repositórios.</param>
+        /// <param name="logger">Instância de <see cref="ILogger{RestauranteService}"/> para logging.</param>
         public RestauranteService(IUnitOfWork unitOfWork, ILogger<RestauranteService> logger)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Obtém todos os restaurantes cadastrados.
+        /// </summary>
+        /// <returns>Uma coleção de <see cref="Restaurante"/>.</returns>
         public Task<IEnumerable<Restaurante>> ObterTodosAsync()
         {
             _logger.LogInformation("Obtendo todos os restaurantes.");
 
             return _unitOfWork.Restaurantes.GetAllAsync();
         }
+
+        /// <summary>
+        /// Obtém um restaurante pelo seu ID.
+        /// </summary>
+        /// <param name="id">ID do restaurante.</param>
+        /// <returns>O <see cref="Restaurante"/> encontrado ou <c>null</c> se não existir.</returns>
+        /// <exception cref="ArgumentException">Quando o ID informado é inválido.</exception>
+        /// <exception cref="KeyNotFoundException">Quando não há restaurante com o ID informado.</exception>
         public async Task<Restaurante?> ObterPorIdAsync(int id)
         {
             if (id <= 0)
@@ -41,6 +61,14 @@ namespace cardapio_digital_api.Services
 
             return restaurante;
         }
+
+        /// <summary>
+        /// Busca restaurantes pelo nome.
+        /// </summary>
+        /// <param name="nome">Nome ou parte do nome do restaurante.</param>
+        /// <returns>Uma coleção de restaurantes correspondentes.</returns>
+        /// <exception cref="ArgumentException">Quando o nome informado é inválido.</exception>
+        /// <exception cref="KeyNotFoundException">Quando nenhum restaurante é encontrado.</exception>
         public async Task<IEnumerable<Restaurante>> BuscarPorNomeAsync(string nome)
         {
            if (string.IsNullOrWhiteSpace(nome))
@@ -62,6 +90,12 @@ namespace cardapio_digital_api.Services
             return busca;
         }
 
+        /// <summary>
+        /// Atualiza os dados de um restaurante.
+        /// </summary>
+        /// <param name="restaurante">Objeto <see cref="Restaurante"/> com dados atualizados.</param>
+        /// <returns><c>true</c> se a atualização for bem-sucedida.</returns>
+        /// <exception cref="KeyNotFoundException">Quando o restaurante não existe.</exception>
         public async Task<bool> AtualizarAsync(Restaurante restaurante)
         {
             var existente = await _unitOfWork.Restaurantes.GetByIdAsync(restaurante.Id);
@@ -89,6 +123,13 @@ namespace cardapio_digital_api.Services
             return true;
         }
 
+        /// <summary>
+        /// Busca restaurantes pelo endereço.
+        /// </summary>
+        /// <param name="endereco">Endereço ou parte do endereço.</param>
+        /// <returns>Uma coleção de restaurantes correspondentes.</returns>
+        /// <exception cref="ArgumentException">Quando o endereço informado é inválido.</exception>
+        /// <exception cref="KeyNotFoundException">Quando nenhum restaurante é encontrado.</exception>
         public async Task<IEnumerable<Restaurante>> BuscarPorEnderecoAsync(string endereco)
         {
             if(string.IsNullOrWhiteSpace(endereco))
@@ -110,6 +151,14 @@ namespace cardapio_digital_api.Services
 
             return busca;
         }
+
+        /// <summary>
+        /// Cria um novo restaurante.
+        /// </summary>
+        /// <param name="restaurante">Objeto <see cref="Restaurante"/> a ser criado.</param>
+        /// <returns>O restaurante criado.</returns>
+        /// <exception cref="ArgumentException">Quando o nome do restaurante é inválido.</exception>
+        /// <exception cref="InvalidOperationException">Quando já existe restaurante com o mesmo nome.</exception>
         public async Task<Restaurante> CriarAsync(Restaurante restaurante)
         {
            if(string.IsNullOrWhiteSpace(restaurante.Nome))
@@ -136,6 +185,12 @@ namespace cardapio_digital_api.Services
             return restaurante;
         }
 
+        /// <summary>
+        /// Obtém o total de pedidos de um restaurante.
+        /// </summary>
+        /// <param name="restauranteId">ID do restaurante.</param>
+        /// <returns>Total de pedidos.</returns>
+        /// <exception cref="ArgumentException">Quando o ID informado é inválido.</exception>
         public async Task<int> ObterTotalPedidosAsync(int restauranteId)
         {
             if (restauranteId <= 0)
@@ -160,6 +215,13 @@ namespace cardapio_digital_api.Services
             return totalPedidos;
         }
 
+        /// <summary>
+        /// Obtém o total de produtos de um restaurante.
+        /// </summary>
+        /// <param name="restauranteId">ID do restaurante.</param>
+        /// <returns>Total de produtos.</returns>
+        /// <exception cref="ArgumentException">Quando o ID informado é inválido.</exception>
+        /// <exception cref="KeyNotFoundException">Quando o restaurante não existe.</exception>
         public async Task<int> ObterTotalProdutosAsync(int restauranteId)
         {
             if(restauranteId <= 0)
@@ -186,6 +248,12 @@ namespace cardapio_digital_api.Services
             return totalProdutos;
         }
 
+        /// <summary>
+        /// Remove um restaurante pelo ID.
+        /// </summary>
+        /// <param name="id">ID do restaurante.</param>
+        /// <returns><c>true</c> se a remoção for bem-sucedida.</returns>
+        /// <exception cref="ArgumentException">Quando o ID é inválido.</exception>
         public async Task<bool> RemoverAsync(int id)
         {
            if (id <= 0)
@@ -212,6 +280,13 @@ namespace cardapio_digital_api.Services
             return true;
         }
 
+        /// <summary>
+        /// Verifica se já existe restaurante com determinado nome.
+        /// </summary>
+        /// <param name="nome">Nome do restaurante.</param>
+        /// <param name="restauranteId">ID opcional para exclusão da verificação.</param>
+        /// <returns><c>true</c> se existir.</returns>
+        /// <exception cref="ArgumentException">Quando o nome é inválido ou ID inválido.</exception>
         public async Task<bool> RestauranteComNomeExisteAsync(string nome, int? restauranteId = null)
         {
             if(string.IsNullOrWhiteSpace(nome))
@@ -242,6 +317,12 @@ namespace cardapio_digital_api.Services
             return true;
         }
 
+        /// <summary>
+        /// Verifica se um restaurante existe pelo ID.
+        /// </summary>
+        /// <param name="id">ID do restaurante.</param>
+        /// <returns><c>true</c> se existir.</returns>
+        /// <exception cref="ArgumentException">Quando o ID é inválido.</exception>
         public async Task<bool> RestauranteExisteAsync(int id)
         {
             if(id <= 0)
