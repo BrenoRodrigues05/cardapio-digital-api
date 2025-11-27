@@ -1,4 +1,5 @@
 ﻿using cardapio_digital_api.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace cardapio_digital_api.Context
@@ -11,7 +12,7 @@ namespace cardapio_digital_api.Context
     /// <see cref="Produto"/>, <see cref="Pedido"/> e <see cref="ItemPedido"/>.
     /// Configura os relacionamentos entre restaurantes, produtos, pedidos e itens de pedidos.
     /// </remarks>
-    public class CardapioDigitalDbContext : DbContext
+    public class CardapioDigitalDbContext : IdentityDbContext<ApplicationUser>
     {
         /// <summary>
         /// Construtor do DbContext, recebendo opções de configuração.
@@ -52,6 +53,8 @@ namespace cardapio_digital_api.Context
         /// <param name="modelBuilder">Construtor de modelo do Entity Framework Core.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             // Restaurante → Produto (1:N)
             modelBuilder.Entity<Restaurante>()
                 .HasMany(r => r.Produtos)
