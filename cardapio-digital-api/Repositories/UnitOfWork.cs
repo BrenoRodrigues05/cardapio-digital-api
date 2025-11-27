@@ -29,7 +29,7 @@ namespace cardapio_digital_api.Repositories
         /// <summary>
         /// Repositório responsável pelas operações de persistência e consulta dos itens de pedido.
         /// </summary>
-        public IRepository<ItemPedido> ItensPedido { get; }
+        public IItemPedidoRepository ItensPedido { get; }
 
         /// <summary>
         /// Repositório responsável pelas operações de persistência e consulta dos pedidos.
@@ -69,7 +69,7 @@ namespace cardapio_digital_api.Repositories
         public UnitOfWork(
             CardapioDigitalDbContext context,
             IRepository<Cliente> clientes,
-            IRepository<ItemPedido> itensPedido,
+            IItemPedidoRepository itensPedido,
             IPedidoRepository pedidos,
             IProdutoRepository produtos,
             IRepository<Restaurante> restaurantes)
