@@ -54,6 +54,7 @@ builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IItemPedidoService, ItemPedidoService>();
+builder.Services.AddScoped<IRestauranteService, RestauranteService>();
 
 // AutoMapper Configuration
 
