@@ -43,18 +43,13 @@ namespace cardapio_digital_api.Models
         public string? Telefone { get; set; }
 
         /// <summary>
-        /// Endereço completo do cliente, utilizado para entregas.
-        /// </summary>
-        /// <example>Rua das Laranjeiras, 123 - São Paulo/SP</example>
-        [Required(ErrorMessage = "O Endereço é Obrigatório!")]
-        public string? Endereco { get; set; }
-
-        /// <summary>
         /// Coleção de pedidos realizados pelo cliente.
         /// </summary>
         /// <remarks>
         /// Cada cliente pode ter um ou mais pedidos registrados.
         /// </remarks>
         public ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
+
+        public ICollection<Endereco> Enderecos { get; set; } = new List<Endereco>();
     }
 }

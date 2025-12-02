@@ -47,6 +47,14 @@ namespace cardapio_digital_api.Context
         /// </summary>
         public DbSet<ItemPedido> ItensPedido { get; set; }
 
+        public DbSet<FormaPagamento> FormasPagamento { get; set; }
+
+        public DbSet<Avaliacao> Avaliacoes { get; set; }
+
+        public DbSet<Entregador> Entregadores { get; set; }
+
+        public DbSet<Endereco> Enderecos { get; set; }
+
         /// <summary>
         /// Configura os relacionamentos entre entidades usando Fluent API.
         /// </summary>
@@ -72,6 +80,31 @@ namespace cardapio_digital_api.Context
                 .HasMany(p => p.ItensPedido)
                 .WithOne(i => i.Produto)
                 .HasForeignKey(i => i.ProdutoId);
+
+            // Cliente → Endereco (1:N)
+            modelBuilder.Entity<Cliente>()
+                .HasMany(c => c.Enderecos)
+                .WithOne(e => e.Cliente)
+                .HasForeignKey(e => e.ClienteId);
+
+            // Pedido → FormaPagamento (N:1)
+            modelBuilder.Entity<Pedido>()
+                .HasOne(p => p.FormaPagamento)
+                .WithMany(f => f.Pedidos)
+                .HasForeignKey(p => p.FormaPagamentoId);
+
+            // Restaurante → Avaliacao (1:N)
+            modelBuilder.Entity<Restaurante>()
+                .HasMany(r => r.Avaliacoes)
+                .WithOne(a => a.Restaurante)
+                .HasForeignKey(a => a.RestauranteId);
+
+            // Entregador → Pedido (1:N)
+            modelBuilder.Entity<Entregador>()
+                .HasMany(e => e.PedidosEntregues)
+                .WithOne(p => p.Entregador)
+                .HasForeignKey(p => p.EntregadorId);
+
         }
     }
 }

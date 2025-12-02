@@ -63,5 +63,9 @@ namespace cardapio_digital_api.Models
         /// Lista de pedidos realizados neste restaurante.
         /// </summary>
         public ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
+
+        public ICollection<Avaliacao> Avaliacoes { get; set; } = new List<Avaliacao>();
+
+
     }
 }

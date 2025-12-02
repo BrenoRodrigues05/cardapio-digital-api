@@ -138,7 +138,6 @@ namespace cardapio_digital_api.Services
             buscaCliente.Nome = cliente.Nome;
             buscaCliente.Email = cliente.Email;
             buscaCliente.Telefone = cliente.Telefone;
-            buscaCliente.Endereco = cliente.Endereco;
 
             _logger.LogInformation("Salvando alterações para o cliente com ID: {Id}", cliente.Id);
 

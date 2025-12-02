@@ -73,5 +73,11 @@ namespace cardapio_digital_api.Models
         [Display(Name = "Valor Total")]
         [NotMapped]
         public decimal ValorTotal => Itens.Sum(i => i.Subtotal);
+
+        public int FormaPagamentoId { get; set; }
+        public FormaPagamento FormaPagamento { get; set; } = null!;
+
+        public int? EntregadorId { get; set; }
+        public Entregador? Entregador { get; set; }
     }
 }
