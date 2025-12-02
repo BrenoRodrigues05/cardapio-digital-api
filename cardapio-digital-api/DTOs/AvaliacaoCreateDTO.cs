@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using cardapio_digital_api.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace cardapio_digital_api.DTOs
 {
@@ -11,8 +12,7 @@ namespace cardapio_digital_api.DTOs
         /// Nota atribuída pelo cliente (1 a 5).
         /// </summary>
         [Required]
-        [Range(1, 5)]
-        public int Nota { get; set; }
+        public NotaEnum Nota { get; set; }
 
         /// <summary>
         /// Comentário opcional da avaliação.

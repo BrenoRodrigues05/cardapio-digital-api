@@ -1,4 +1,6 @@
-﻿namespace cardapio_digital_api.DTOs
+﻿using cardapio_digital_api.Models.Enums;
+
+namespace cardapio_digital_api.DTOs
 {
     /// <summary>
     /// Representa os dados retornados pela API sobre uma avaliação.
@@ -13,7 +15,7 @@
         /// <summary>
         /// Nota atribuída (1 a 5).
         /// </summary>
-        public int Nota { get; set; }
+        public NotaEnum Nota { get; set; }
 
         /// <summary>
         /// Comentário opcional do cliente.

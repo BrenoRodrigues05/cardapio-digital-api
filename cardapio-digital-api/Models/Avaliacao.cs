@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using cardapio_digital_api.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace cardapio_digital_api.Models
 {
@@ -18,8 +19,7 @@ namespace cardapio_digital_api.Models
         /// Valor deve estar entre 1 e 5.
         /// </summary>
         [Required(ErrorMessage = "A nota é obrigatória.")]
-        [Range(1, 5, ErrorMessage = "A nota deve ser entre 1 e 5.")]
-        public int Nota { get; set; }
+        public NotaEnum Nota { get; set; }
 
         /// <summary>
         /// Comentário opcional fornecido pelo cliente.
