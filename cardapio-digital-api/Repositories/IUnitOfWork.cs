@@ -40,6 +40,11 @@ namespace cardapio_digital_api.Repositories
         IRepository<Restaurante> Restaurantes { get; }
 
         /// <summary>
+        /// Repositório responsável pelas operações de persistência e consulta dos Usuários.
+        /// </summary>
+        IUsuarioRepository Usuarios { get; }
+
+        /// <summary>
         /// Persiste todas as alterações realizadas nos repositórios associados à unidade de trabalho.
         /// </summary>
         /// <returns>

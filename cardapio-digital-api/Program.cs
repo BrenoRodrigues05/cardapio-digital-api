@@ -75,6 +75,7 @@ builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IRestauranteRepository, RestauranteRepository>();
 builder.Services.AddScoped<IItemPedidoRepository, ItemPedidoRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
 // Dependency Injection for Services
 builder.Services.AddScoped<IPedidoService, PedidoService>();
@@ -82,6 +83,7 @@ builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IItemPedidoService, ItemPedidoService>();
 builder.Services.AddScoped<IRestauranteService, RestauranteService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Autenticação e Autorização com JWT

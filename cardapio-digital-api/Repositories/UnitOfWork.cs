@@ -47,6 +47,11 @@ namespace cardapio_digital_api.Repositories
         public IRepository<Restaurante> Restaurantes { get; }
 
         /// <summary>
+        /// Repositório responsável pelas operações de persistência e consulta dos Usuarios.
+        /// </summary>
+        public IUsuarioRepository Usuarios { get; }
+
+        /// <summary>
         /// Inicializa uma nova instância da classe <see cref="UnitOfWork"/> com os repositórios e o contexto especificados.
         /// </summary>
         /// <param name="context">O contexto do banco de dados utilizado para gerenciar as entidades.</param>
