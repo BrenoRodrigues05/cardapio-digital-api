@@ -98,7 +98,7 @@ namespace cardapio_digital_api.Services
 
             var existe = await _unitOfWork.Usuarios.EmailExistsAsync(email);
 
-            if(!existe)
+            if (!existe)
             {
                 _logger.LogInformation("Email {Email} does not exist.", email);
                 return false;
@@ -117,9 +117,9 @@ namespace cardapio_digital_api.Services
                 throw new ArgumentNullException(nameof(dto));
            }
 
-              var emailExists = await EmailExistsAsync(dto.Email);
+              var existe = await EmailExistsAsync(dto.Email);
 
-            if (emailExists)
+            if (existe)
             {
                 _logger.LogInformation("Registration failed: Email {Email} already exists.", dto.Email);
                 return false;

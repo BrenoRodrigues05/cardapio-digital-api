@@ -49,6 +49,9 @@ namespace cardapio_digital_api.Services
             if (pedido.Itens == null || pedido.Itens.Count == 0)
                 throw new Exception("O pedido deve conter pelo menos um item");
 
+            if (pedido.FormaPagamentoId <= 0)
+                throw new Exception("Forma de pagamento inválida");
+
             foreach (var item in pedido.Itens)
             {
                 var product = await _uow.Produtos.GetByIdAsync(item.ProdutoId);

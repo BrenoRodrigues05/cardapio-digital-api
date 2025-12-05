@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using cardapio_digital_api.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace cardapio_digital_api.Services
@@ -9,12 +10,17 @@ namespace cardapio_digital_api.Services
     public interface ITokenService
     {
         /// <summary>
+        /// Gera token direto a partir do Usuario
+        /// </summary>
+        /// <param name="usuario"></param>
+        /// <returns></returns>
+        string GenerateToken(Usuario usuario);
+        /// <summary>
         /// Gera um token de acesso JWT baseado em claims fornecidas.
         /// </summary>
         /// <param name="claims">Coleção de <see cref="Claim"/> que serão incluídas no token.</param>
-        /// <param name="configuration">Instância de <see cref="IConfiguration"/> para acessar configurações do token.</param>
         /// <returns>Um <see cref="JwtSecurityToken"/> contendo as claims e expiração configuradas.</returns>
-        JwtSecurityToken GenerateAccessToken(IEnumerable<Claim> claims, IConfiguration configuration);
+        string GenerateAccessToken(IEnumerable<Claim> claims);
 
         /// <summary>
         /// Gera um token de atualização (refresh token) seguro.

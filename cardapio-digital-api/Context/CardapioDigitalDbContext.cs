@@ -55,6 +55,8 @@ namespace cardapio_digital_api.Context
 
         public DbSet<Endereco> Enderecos { get; set; }
 
+        public DbSet<Usuario> Usuarios { get; set; }
+
         /// <summary>
         /// Configura os relacionamentos entre entidades usando Fluent API.
         /// </summary>
@@ -104,6 +106,14 @@ namespace cardapio_digital_api.Context
                 .HasMany(e => e.PedidosEntregues)
                 .WithOne(p => p.Entregador)
                 .HasForeignKey(p => p.EntregadorId);
+
+            // Usuario 
+            modelBuilder.Entity<Usuario>(entity =>
+            {
+                entity.HasKey(u => u.Id);
+                entity.Property(u => u.Email).IsRequired();
+                entity.Property(u => u.PasswordHash).IsRequired();
+            });
 
         }
     }

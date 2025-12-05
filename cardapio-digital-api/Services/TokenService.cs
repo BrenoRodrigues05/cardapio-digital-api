@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using cardapio_digital_api.Models;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -22,14 +23,25 @@ namespace cardapio_digital_api.Services
             _config = config;
         }
 
+        public string GenerateToken(Usuario usuario)
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+                new Claim(ClaimTypes.Name, usuario.Name),
+                new Claim(ClaimTypes.Email, usuario.Email)
+            };
+
+            return GenerateAccessToken(claims);
+        }
+
         /// <summary>
         /// Gera um token de acesso (JWT) com base em claims fornecidas.
         /// </summary>
         /// <param name="claims">Coleção de <see cref="Claim"/> que será incluída no token.</param>
-        /// <param name="configuration">Configuração opcional (não utilizada, o serviço usa a configuração injetada).</param>
         /// <returns>Um <see cref="JwtSecurityToken"/> válido.</returns>
         /// <exception cref="ArgumentNullException">Se a chave secreta não estiver configurada.</exception>
-        public JwtSecurityToken GenerateAccessToken(IEnumerable<Claim> claims, IConfiguration configuration)
+        public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
             var key = _config["Jwt:SecretKey"] ?? throw new ArgumentNullException("SecretKey inválida");
 
@@ -51,7 +63,7 @@ namespace cardapio_digital_api.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
 
-            return token;
+            return tokenHandler.WriteToken(token);
         }
 
         /// <summary>

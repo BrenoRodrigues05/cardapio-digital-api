@@ -77,7 +77,8 @@ namespace cardapio_digital_api.Repositories
             IItemPedidoRepository itensPedido,
             IPedidoRepository pedidos,
             IProdutoRepository produtos,
-            IRepository<Restaurante> restaurantes)
+            IRepository<Restaurante> restaurantes,
+            IUsuarioRepository usuarios)
         {
             _context = context;
             Clientes = clientes;
@@ -85,6 +86,7 @@ namespace cardapio_digital_api.Repositories
             Pedidos = pedidos;
             Produtos = produtos;
             Restaurantes = restaurantes;
+            Usuarios = usuarios;
         }
 
         /// <summary>
