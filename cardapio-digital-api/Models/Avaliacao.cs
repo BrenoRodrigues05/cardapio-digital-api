@@ -53,5 +53,15 @@ namespace cardapio_digital_api.Models
         /// Restaurante avaliado pelo cliente.
         /// </summary>
         public Restaurante Restaurante { get; set; } = null!;
+
+        /// <summary>
+        /// Entregador avaliado pelo cliente.
+        /// </summary>
+        public Entregador Entregador { get; set; } = null!;
+
+        /// <summary>
+        /// Identificador do entregador que recebeu a avaliação.
+        /// </summary>
+        public int EntregadorId { get; set; }
     }
 }

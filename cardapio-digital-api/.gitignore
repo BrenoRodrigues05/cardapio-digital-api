@@ -1,2 +1,5 @@
 ﻿appsettings.json
 appsettings.*.json
+
+# Ignorar o DbContextFactory de design time
+Context/CardapioDigitalDbContextFactory.cs

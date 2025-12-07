@@ -85,14 +85,19 @@ namespace cardapio_digital_api.Logging
         /// </remarks>
         private void TextInFile(string message)
         {
-            string path = @"C:\Users\CSM\Desktop\CURSOS\ASP NET CORE\LOGGING\Cardapio-digital.txt";
+            // Cria pasta Logs dentro da pasta da aplicação
+            string logDirectory = Path.Combine(AppContext.BaseDirectory, "Logs");
+            Directory.CreateDirectory(logDirectory); // garante que a pasta exista
 
-            using (StreamWriter stream = new StreamWriter(path, true))
+            string path = Path.Combine(logDirectory, "Cardapio-digital.txt");
+
             {
                 try
                 {
-                    stream.WriteLine(message);
-                    stream.Close();
+                    using (StreamWriter stream = new StreamWriter(path, true))
+                    {
+                        stream.WriteLine(message);
+                    }
                 }
                 catch (Exception)
                 {
